@@ -34,6 +34,7 @@ function App() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     addTask(formData);
+    setFormData({ id: "", title: "", description: "", priority: "" });
     handleModal();
   };
 

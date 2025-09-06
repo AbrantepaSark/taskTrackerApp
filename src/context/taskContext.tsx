@@ -12,7 +12,6 @@ export function TaskProvider({ children }: { children: ReactNode }) {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   const addTask = ({ title, description, priority }: Task) => {
-    console.log({ title, description, priority });
     setTasks((prev) => [
       ...prev,
       { id: uuidv4(), title, description, priority },

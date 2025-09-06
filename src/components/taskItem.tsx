@@ -22,14 +22,14 @@ export const TaskItem = ({
           {data.priority}
         </span>
       </div>
-      <p className="my-5 font-normal   text-gray-700 dark:text-gray-400">
+      <p className="my-3 font-normal   text-gray-700 dark:text-gray-400">
         {data.description}
       </p>
       <div className="flex justify-end space-x-3 font-semibold">
         <p onClick={() => handleModal()} className="text-blue-600">
           Edit
         </p>
-        <p onClick={() => removeTask()} className="text-red-600">
+        <p onClick={() => removeTask(data.id)} className="text-red-600">
           Delete
         </p>
       </div>
