@@ -2,15 +2,40 @@ import { useState } from "react";
 import "./App.css";
 import { SearchBar } from "./components/search";
 import { Filter } from "./components/filter";
-import { Task } from "./components/task";
+import { TaskItem } from "./components/taskItem";
 import { Modal } from "./components/modal";
 import { MdAdd } from "react-icons/md";
+import { useTasks } from "./context/taskContext";
+import type { Task } from "./interfaces/interfaces";
 
 function App() {
-  //const [count, setCount] = useState(0);
+  const { tasks, addTask } = useTasks();
+  const [formData, setFormData] = useState({
+    id: "",
+    title: "",
+    description: "",
+    priority: "",
+  });
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleModal = () => setIsModalOpen(!isModalOpen);
+
+  // Handle change for all inputs/selects
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addTask(formData);
+    handleModal();
+  };
 
   return (
     <div className="h-full w-full">
@@ -26,16 +51,18 @@ function App() {
       <div className="p-5 ">
         <Filter />
         <div className="my-5 space-y-5">
-          <Task
-            title="Heading"
-            description="The alert component can be used to provide information to your users such as success "
-            priority="HIGH"
-            modalHandler={handleModal}
-            deleteHandler={() => {}}
-          />
+          {tasks.map((task: Task) => (
+            <TaskItem key={task.id} data={task} handleModal={handleModal} />
+          ))}
         </div>
       </div>
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <Modal
+        submitHandler={handleSubmit}
+        data={formData}
+        inputHandler={handleChange}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }
