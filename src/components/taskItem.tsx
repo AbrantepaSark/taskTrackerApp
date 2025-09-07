@@ -6,16 +6,18 @@ import { useTasks } from "../context/taskContext";
 
 export const TaskItem = ({
   data,
-  handleModal,
+  handleEditTaskModal,
+  setEditingTask,
 }: {
   data: Task;
-  handleModal: () => void;
+  handleEditTaskModal: () => void;
+  setEditingTask: (id: string) => void;
 }) => {
   const { removeTask } = useTasks();
   return (
     <div className="max-w-sm px-4 py-3 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
       <div className="flex justify-between items-center">
-        <h5 className="mb-2 text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
+        <h5 className="mb-2 text-lg font-semibold tracking-tight text-gray-900 dark:text-white">
           {data.title}
         </h5>
         <span className="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-2 rounded-full ">
@@ -26,12 +28,25 @@ export const TaskItem = ({
         {data.description}
       </p>
       <div className="flex justify-end space-x-3 font-semibold">
-        <p onClick={() => handleModal()} className="text-blue-600">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setEditingTask(data.id);
+            handleEditTaskModal();
+          }}
+          className=" py-1 text-sm text-blue-600 "
+        >
           Edit
-        </p>
-        <p onClick={() => removeTask(data.id)} className="text-red-600">
+        </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            removeTask(data.id);
+          }}
+          className="px-3 text-sm py-1 text-red-600"
+        >
           Delete
-        </p>
+        </button>
       </div>
     </div>
   );

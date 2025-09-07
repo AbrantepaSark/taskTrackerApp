@@ -8,11 +8,11 @@ export const TaskContext = createContext<TaskContextType | undefined>(
   undefined
 );
 
-const STORAGE_KEY = "my-tasks";
+const STORAGE_KEY = "myTasks";
 
 export function TaskProvider({ children }: { children: ReactNode }) {
   const [tasks, setTasks] = useState<Task[]>(() => {
-    const stored = localStorage.getItem("my-tasks");
+    const stored = localStorage.getItem(STORAGE_KEY);
     return stored ? JSON.parse(stored) : [];
   });
 
@@ -25,8 +25,8 @@ export function TaskProvider({ children }: { children: ReactNode }) {
 
   const addTask = ({ title, description, priority }: Task) => {
     setTasks((prev) => [
-      ...prev,
       { id: uuidv4(), title, description, priority },
+      ...prev,
     ]);
   };
 

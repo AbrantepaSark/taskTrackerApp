@@ -5,14 +5,20 @@ import { SearchBar } from "./components/search";
 import { Filter } from "./components/filter";
 import { TaskItem } from "./components/taskItem";
 import { AddTaskModal } from "./components/addTaskModal";
-//import { EditTaskModal } from "./components/editTaskModal";
+import { EditTaskModal } from "./components/editTaskModal";
 import { MdAdd } from "react-icons/md";
 import { useTasks } from "./context/taskContext";
 //import type { Task } from "./interfaces/interfaces";
 
 function App() {
-  const { tasks, addTask, priorityFilter, setPriorityFilter, reorderTasks } =
-    useTasks();
+  const {
+    tasks,
+    addTask,
+    editTask,
+    priorityFilter,
+    setPriorityFilter,
+    reorderTasks,
+  } = useTasks();
   const [formData, setFormData] = useState({
     id: "",
     title: "",
@@ -20,7 +26,9 @@ function App() {
     priority: "",
   });
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+  const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<string>("");
   const [search, setSearch] = useState("");
 
   const filteredTasks = tasks.filter((task) => {
@@ -35,7 +43,9 @@ function App() {
     return matchesSearch && matchesPriority;
   });
 
-  const handleModal = () => setIsModalOpen(!isModalOpen);
+  const handleAddTaskModal = () => setIsAddTaskModalOpen(!isAddTaskModalOpen);
+  const handleEditTaskModal = () =>
+    setIsEditTaskModalOpen(!isEditTaskModalOpen);
 
   // Handle change for all inputs/selects
   const handleChange = (
@@ -49,9 +59,19 @@ function App() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.title || !formData.description || !formData.priority) return;
     addTask(formData);
     setFormData({ id: "", title: "", description: "", priority: "" });
-    handleModal();
+    handleAddTaskModal();
+  };
+
+  const handleTaskUpdate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.title || !formData.description || !formData.priority) return;
+    editTask({ ...formData, id: editingTask });
+    setEditingTask;
+    setFormData({ id: "", title: "", description: "", priority: "" });
+    handleEditTaskModal();
   };
 
   const onDragEnd = (result: any) => {
@@ -60,17 +80,17 @@ function App() {
   };
 
   return (
-    <div className="h-full w-full">
-      <div className=" h-40 w-full flex px-5  items-center bg-blue-900 text-white">
-        <div className=" w-full space-y-6">
+    <div className="h-full w-full items-center ">
+      <div className=" h-40 w-full   flex px-5  items-center bg-blue-900 text-white">
+        <div className=" w-full mx-auto  space-y-4">
           <div className="flex justify-between">
             <p className="text-2xl font-bold"> Task Tracker </p>
-            <MdAdd onClick={() => handleModal()} className="h-10 w-10" />
+            <MdAdd onClick={handleAddTaskModal} className="h-10 w-10" />
           </div>
           <SearchBar search={search} setSearch={setSearch} />
         </div>
       </div>
-      <div className="p-5 ">
+      <div className="p-5">
         <Filter setPriorityFilter={setPriorityFilter} />
 
         <DragDropContext onDragEnd={onDragEnd}>
@@ -100,7 +120,8 @@ function App() {
                           <TaskItem
                             key={task.id}
                             data={task}
-                            handleModal={handleModal}
+                            handleEditTaskModal={handleEditTaskModal}
+                            setEditingTask={setEditingTask}
                           />
                         </div>
                       )}
@@ -119,8 +140,16 @@ function App() {
         submitHandler={handleSubmit}
         data={formData}
         inputHandler={handleChange}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isAddTaskModalOpen}
+        onClose={() => setIsAddTaskModalOpen(false)}
+      />
+      <EditTaskModal
+        submitHandler={handleTaskUpdate}
+        data={formData}
+        inputHandler={handleChange}
+        isOpen={isEditTaskModalOpen}
+        onClose={() => setIsEditTaskModalOpen(false)}
+        editingTask={editingTask}
       />
     </div>
   );

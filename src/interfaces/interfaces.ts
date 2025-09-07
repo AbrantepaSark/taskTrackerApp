@@ -18,6 +18,7 @@ export interface TaskContextType {
 export interface taskModalProps {
   data?: Task;
   isOpen: boolean;
+  editingTask?: string;
   onClose: () => void;
   inputHandler: (
     e: React.ChangeEvent<
