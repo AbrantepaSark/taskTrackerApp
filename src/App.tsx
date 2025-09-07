@@ -19,6 +19,17 @@ function App() {
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [search, setSearch] = useState("");
+
+  // Filter tasks by search term
+  const filteredTasks =
+    search.trim() === ""
+      ? tasks
+      : tasks.filter(
+          (task) =>
+            task.title.toLowerCase().includes(search.toLowerCase()) ||
+            task.description.toLowerCase().includes(search.toLowerCase())
+        );
 
   const handleModal = () => setIsModalOpen(!isModalOpen);
 
@@ -58,15 +69,19 @@ function App() {
             <p className="text-2xl font-bold"> Task Tracker </p>
             <MdAdd onClick={() => handleModal()} className="h-10 w-10" />
           </div>
-          <SearchBar />
+          <SearchBar search={search} setSearch={setSearch} />
         </div>
       </div>
       <div className="p-5 ">
         <Filter />
         <div className="my-5 space-y-5">
-          {tasks.map((task: Task) => (
-            <TaskItem key={task.id} data={task} handleModal={handleModal} />
-          ))}
+          {filteredTasks.length > 0 ? (
+            filteredTasks.map((task: Task) => (
+              <TaskItem key={task.id} data={task} handleModal={handleModal} />
+            ))
+          ) : (
+            <p className="text-gray-500">No tasks found</p>
+          )}
         </div>
       </div>
       <AddTaskModal
