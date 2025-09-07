@@ -5,16 +5,13 @@ export interface Task {
   priority: string;
 }
 
-// export interface TaskItemProps {
-//   data: Task;
-//   modalHandler: () => void;
-// }
-
 export interface TaskContextType {
   tasks: Task[];
   addTask: ({ title, description, priority }: Task) => void;
   editTask: ({ title, description, priority }: Task) => void;
   removeTask: (id: string) => void;
+  priorityFilter: string;
+  setPriorityFilter: (filter: string) => void;
 }
 
 export interface taskModalProps {

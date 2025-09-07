@@ -10,7 +10,7 @@ import { useTasks } from "./context/taskContext";
 import type { Task } from "./interfaces/interfaces";
 
 function App() {
-  const { tasks, addTask } = useTasks();
+  const { tasks, addTask, priorityFilter, setPriorityFilter } = useTasks();
   const [formData, setFormData] = useState({
     id: "",
     title: "",
@@ -22,20 +22,28 @@ function App() {
   const [search, setSearch] = useState("");
 
   // Filter tasks by search term
-  const filteredTasks =
-    search.trim() === ""
-      ? tasks
-      : tasks.filter(
-          (task) =>
-            task.title.toLowerCase().includes(search.toLowerCase()) ||
-            task.description.toLowerCase().includes(search.toLowerCase())
-        );
+  // const filteredTasks =
+  //   search.trim() === ""
+  //     ? tasks
+  //     : tasks.filter(
+  //         (task) =>
+  //           task.title.toLowerCase().includes(search.toLowerCase()) ||
+  //           task.description.toLowerCase().includes(search.toLowerCase())
+  //       );
+
+  const filteredTasks = tasks.filter((task) => {
+    const matchesSearch =
+      search.trim() === "" ||
+      task.title.toLowerCase().includes(search.toLowerCase()) ||
+      task.description.toLowerCase().includes(search.toLowerCase());
+
+    const matchesPriority =
+      priorityFilter === "All" || task.priority === priorityFilter;
+
+    return matchesSearch && matchesPriority;
+  });
 
   const handleModal = () => setIsModalOpen(!isModalOpen);
-
-  // useEffect(() => {
-  //   setFormData(task); // sync if different task opened
-  // }, [task]);
 
   // Handle change for all inputs/selects
   const handleChange = (
@@ -73,7 +81,7 @@ function App() {
         </div>
       </div>
       <div className="p-5 ">
-        <Filter />
+        <Filter setPriorityFilter={setPriorityFilter} />
         <div className="my-5 space-y-5">
           {filteredTasks.length > 0 ? (
             filteredTasks.map((task: Task) => (
