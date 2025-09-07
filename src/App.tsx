@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import "./App.css";
 import { SearchBar } from "./components/search";
 import { Filter } from "./components/filter";
@@ -7,10 +8,11 @@ import { AddTaskModal } from "./components/addTaskModal";
 //import { EditTaskModal } from "./components/editTaskModal";
 import { MdAdd } from "react-icons/md";
 import { useTasks } from "./context/taskContext";
-import type { Task } from "./interfaces/interfaces";
+//import type { Task } from "./interfaces/interfaces";
 
 function App() {
-  const { tasks, addTask, priorityFilter, setPriorityFilter } = useTasks();
+  const { tasks, addTask, priorityFilter, setPriorityFilter, reorderTasks } =
+    useTasks();
   const [formData, setFormData] = useState({
     id: "",
     title: "",
@@ -20,16 +22,6 @@ function App() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [search, setSearch] = useState("");
-
-  // Filter tasks by search term
-  // const filteredTasks =
-  //   search.trim() === ""
-  //     ? tasks
-  //     : tasks.filter(
-  //         (task) =>
-  //           task.title.toLowerCase().includes(search.toLowerCase()) ||
-  //           task.description.toLowerCase().includes(search.toLowerCase())
-  //       );
 
   const filteredTasks = tasks.filter((task) => {
     const matchesSearch =
@@ -62,12 +54,10 @@ function App() {
     handleModal();
   };
 
-  // const handleUpdate = (e: React.FormEvent, task: Task) => {
-  //   e.preventDefault();
-  //   editTask(task);
-  //   setFormData({ id: "", title: "", description: "", priority: "" });
-  //   handleModal();
-  // };
+  const onDragEnd = (result: any) => {
+    if (!result.destination) return;
+    reorderTasks(result.source.index, result.destination.index);
+  };
 
   return (
     <div className="h-full w-full">
@@ -82,15 +72,48 @@ function App() {
       </div>
       <div className="p-5 ">
         <Filter setPriorityFilter={setPriorityFilter} />
-        <div className="my-5 space-y-5">
-          {filteredTasks.length > 0 ? (
-            filteredTasks.map((task: Task) => (
-              <TaskItem key={task.id} data={task} handleModal={handleModal} />
-            ))
-          ) : (
-            <p className="text-gray-500">No tasks found</p>
-          )}
-        </div>
+
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="task-list">
+            {(provided) => (
+              <div
+                className="space-y-5 mt-5"
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {filteredTasks.length > 0 ? (
+                  filteredTasks.map((task, index) => (
+                    <Draggable
+                      key={task.id}
+                      draggableId={task.id.toString()}
+                      index={index}
+                    >
+                      {(provided, snapshot) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          className={` ${
+                            snapshot.isDragging ? "shadow-lg" : ""
+                          }`}
+                        >
+                          <TaskItem
+                            key={task.id}
+                            data={task}
+                            handleModal={handleModal}
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))
+                ) : (
+                  <p className="text-gray-500">No tasks found</p>
+                )}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
       </div>
       <AddTaskModal
         submitHandler={handleSubmit}
@@ -104,11 +127,3 @@ function App() {
 }
 
 export default App;
-
-// <EditTaskModal
-//   submitHandler={handleUpdate}
-//   data={formData}
-//   inputHandler={handleChange}
-//   isOpen={isModalOpen}
-//   onClose={() => setIsModalOpen(false)}
-// />

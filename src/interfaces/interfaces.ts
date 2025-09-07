@@ -12,6 +12,7 @@ export interface TaskContextType {
   removeTask: (id: string) => void;
   priorityFilter: string;
   setPriorityFilter: (filter: string) => void;
+  reorderTasks: (startIndex: number, endIndex: number) => void;
 }
 
 export interface taskModalProps {
