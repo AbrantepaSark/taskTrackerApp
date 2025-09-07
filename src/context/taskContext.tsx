@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 import { v4 as uuidv4 } from "uuid";
 
@@ -8,8 +8,18 @@ export const TaskContext = createContext<TaskContextType | undefined>(
   undefined
 );
 
+const STORAGE_KEY = "my-tasks";
+
 export function TaskProvider({ children }: { children: ReactNode }) {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<Task[]>(() => {
+    const stored = localStorage.getItem("my-tasks");
+    return stored ? JSON.parse(stored) : [];
+  });
+
+  // Save tasks whenever they change
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+  }, [tasks]);
 
   const addTask = ({ title, description, priority }: Task) => {
     setTasks((prev) => [

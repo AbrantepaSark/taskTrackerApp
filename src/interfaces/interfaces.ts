@@ -17,8 +17,8 @@ export interface TaskContextType {
   removeTask: (id: string) => void;
 }
 
-export interface modalProps {
-  data: Task;
+export interface taskModalProps {
+  data?: Task;
   isOpen: boolean;
   onClose: () => void;
   inputHandler: (

@@ -3,7 +3,8 @@ import "./App.css";
 import { SearchBar } from "./components/search";
 import { Filter } from "./components/filter";
 import { TaskItem } from "./components/taskItem";
-import { Modal } from "./components/modal";
+import { AddTaskModal } from "./components/addTaskModal";
+//import { EditTaskModal } from "./components/editTaskModal";
 import { MdAdd } from "react-icons/md";
 import { useTasks } from "./context/taskContext";
 import type { Task } from "./interfaces/interfaces";
@@ -21,6 +22,10 @@ function App() {
 
   const handleModal = () => setIsModalOpen(!isModalOpen);
 
+  // useEffect(() => {
+  //   setFormData(task); // sync if different task opened
+  // }, [task]);
+
   // Handle change for all inputs/selects
   const handleChange = (
     e: React.ChangeEvent<
@@ -37,6 +42,13 @@ function App() {
     setFormData({ id: "", title: "", description: "", priority: "" });
     handleModal();
   };
+
+  // const handleUpdate = (e: React.FormEvent, task: Task) => {
+  //   e.preventDefault();
+  //   editTask(task);
+  //   setFormData({ id: "", title: "", description: "", priority: "" });
+  //   handleModal();
+  // };
 
   return (
     <div className="h-full w-full">
@@ -57,7 +69,7 @@ function App() {
           ))}
         </div>
       </div>
-      <Modal
+      <AddTaskModal
         submitHandler={handleSubmit}
         data={formData}
         inputHandler={handleChange}
@@ -69,3 +81,11 @@ function App() {
 }
 
 export default App;
+
+// <EditTaskModal
+//   submitHandler={handleUpdate}
+//   data={formData}
+//   inputHandler={handleChange}
+//   isOpen={isModalOpen}
+//   onClose={() => setIsModalOpen(false)}
+// />
