@@ -81,6 +81,13 @@ The app uses React Context API instead of external libraries for simplicity:
   - Managed locally in the App component.
   - Combined with the global filter in rendering logic.
 
+## 🧪 Running Tests
+
+This project uses Jest + React Testing Library for unit tests.
+
+- # Run all tests
+  npm run test
+
 ## 📖 Usage Guide
 
 ### Add a Task
