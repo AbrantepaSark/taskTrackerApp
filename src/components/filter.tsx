@@ -13,7 +13,6 @@ export const Filter = ({
 
   return (
     <div className="relative inline-block text-left">
-      {/* Dropdown button */}
       <button
         onClick={toggleDropdown}
         className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
@@ -21,7 +20,6 @@ export const Filter = ({
         Filter ▾
       </button>
 
-      {/* Dropdown menu */}
       {isOpen && (
         <div className="absolute mt-2 w-40 bg-white border rounded-lg shadow-lg z-10">
           <ul className="py-1">

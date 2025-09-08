@@ -6,7 +6,7 @@ export const SearchBar = ({
   setSearch: (e: string) => void;
 }) => {
   return (
-    <div className="flex items-center max-w-sm ">
+    <div className="flex items-center w-full ">
       <div className=" w-full">
         <input
           type="text"

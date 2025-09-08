@@ -10,12 +10,14 @@ export const TaskContext = createContext<TaskContextType | undefined>(
 
 const STORAGE_KEY = "myTasks";
 
-export function TaskProvider({ children }: { children: ReactNode }) {
+export const TaskProvider = ({ children }: { children: ReactNode }) => {
+  //Initialize task list from local storage
   const [tasks, setTasks] = useState<Task[]>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     return stored ? JSON.parse(stored) : [];
   });
 
+  //Priority filter
   const [priorityFilter, setPriorityFilter] = useState("All");
 
   // Save tasks whenever they change
@@ -23,6 +25,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
   }, [tasks]);
 
+  //Add task action
   const addTask = ({ title, description, priority }: Task) => {
     setTasks((prev) => [
       { id: uuidv4(), title, description, priority },
@@ -30,6 +33,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     ]);
   };
 
+  //Edit task action
   const editTask = ({ id, title, description, priority }: Task) => {
     setTasks((prev) =>
       prev.map((task) =>
@@ -37,11 +41,12 @@ export function TaskProvider({ children }: { children: ReactNode }) {
       )
     );
   };
-
+  // Delete task action
   const removeTask = (id: string) => {
     setTasks((prev) => prev.filter((task) => task.id !== id));
   };
 
+  //Reodering task on drag and drop
   const reorderTasks = (
     startIndex: number,
     endIndex: number,
@@ -86,7 +91,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
       {children}
     </TaskContext.Provider>
   );
-}
+};
 
 export function useTasks() {
   const context = useContext(TaskContext);

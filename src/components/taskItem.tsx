@@ -1,6 +1,3 @@
-//import React from "react";
-
-//import type { TaskItemProps } from "../interfaces/interfaces";
 import type { Task } from "@/interfaces/interfaces";
 import { useTasks } from "../context/taskContext";
 
@@ -15,7 +12,7 @@ export const TaskItem = ({
 }) => {
   const { removeTask } = useTasks();
   return (
-    <div className="max-w-sm px-4 py-3 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+    <div className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
       <div className="flex justify-between items-center">
         <h5 className="mb-2 text-lg font-semibold tracking-tight text-gray-900 dark:text-white">
           {data.title}

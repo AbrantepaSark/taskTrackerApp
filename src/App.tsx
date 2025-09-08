@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import "./App.css";
 import { SearchBar } from "./components/search";
 import { Filter } from "./components/filter";
 import { TaskItem } from "./components/taskItem";
@@ -8,7 +7,7 @@ import { AddTaskModal } from "./components/addTaskModal";
 import { EditTaskModal } from "./components/editTaskModal";
 import { MdAdd } from "react-icons/md";
 import { useTasks } from "./context/taskContext";
-//import type { Task } from "./interfaces/interfaces";
+import type { Task } from "./interfaces/interfaces";
 
 function App() {
   const {
@@ -31,6 +30,7 @@ function App() {
   const [editingTask, setEditingTask] = useState<string>("");
   const [search, setSearch] = useState("");
 
+  //Filter task
   const filteredTasks = tasks.filter((task) => {
     const matchesSearch =
       search.trim() === "" ||
@@ -43,7 +43,9 @@ function App() {
     return matchesSearch && matchesPriority;
   });
 
+  //Toggle add task form modal
   const handleAddTaskModal = () => setIsAddTaskModalOpen(!isAddTaskModalOpen);
+  //Toggle edit task form modal
   const handleEditTaskModal = () =>
     setIsEditTaskModalOpen(!isEditTaskModalOpen);
 
@@ -57,6 +59,7 @@ function App() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  //Task submit handler
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.description || !formData.priority) return;
@@ -65,15 +68,26 @@ function App() {
     handleAddTaskModal();
   };
 
+  //Task update handler
   const handleTaskUpdate = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title || !formData.description || !formData.priority) return;
-    editTask({ ...formData, id: editingTask });
-    setEditingTask;
+    const dataToPass: Task = { ...formData };
+    const task = tasks.find((item: Task) => item.id === editingTask);
+
+    if (!task) return;
+    if (dataToPass.title == "") dataToPass.title = task.title;
+
+    if (dataToPass.description == "") dataToPass.description = task.description;
+
+    if (dataToPass.priority == "") dataToPass.priority = task.priority;
+
+    editTask({ ...dataToPass, id: task.id });
+    setEditingTask("");
     setFormData({ id: "", title: "", description: "", priority: "" });
     handleEditTaskModal();
   };
 
+  //Handle draggable
   const onDragEnd = (result: any) => {
     if (!result.destination) return;
     reorderTasks(result.source.index, result.destination.index);
@@ -81,7 +95,7 @@ function App() {
 
   return (
     <div className="h-full w-full items-center ">
-      <div className=" h-40 w-full   flex px-5  items-center bg-blue-900 text-white">
+      <div className=" h-40 w-full   flex px-5 md:px-10 lg:px-50 xl:px-80 items-center bg-blue-900 text-white">
         <div className=" w-full mx-auto  space-y-4">
           <div className="flex justify-between">
             <p className="text-2xl font-bold"> Task Tracker </p>
@@ -90,14 +104,14 @@ function App() {
           <SearchBar search={search} setSearch={setSearch} />
         </div>
       </div>
-      <div className="p-5">
+      <div className="p-5 md:px-10 lg:px-50 xl:px-80 ">
         <Filter setPriorityFilter={setPriorityFilter} />
 
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="task-list">
             {(provided) => (
               <div
-                className="space-y-5 mt-5"
+                className=" mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2 "
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >
